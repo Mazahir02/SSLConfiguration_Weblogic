@@ -1,0 +1,19 @@
+#Generate Key Pair / Identity
+keytool -genkey -keystore Identity.jks -keyalg RSA -keysize 2048 -storepass Welcome1 -alias wls_ssl -dname "CN= oracle-vm.weblogic.com, OU=Middleware, O=Oracle" -validity 365 -storeType JKS
+
+#Export Public Certificate
+keytool -export -keystore Identity.jks -storepass Welcome1 -alias wls_ssl -file wls_ssl.cer -keypass Welcome1
+
+#Import Cert in Trust Keystore
+keytool -import -alias wls_ssl -file wls_ssl.cer -keystore Trust.jks -storepass Welcome1
+
+#Generate CSR
+keytool -certreq -keystore Identity.jks -storepass Welcome1 -alias wls_ssl -file oracle-vm.csr -keypass Welcome1
+
+#List Certificate
+keytool -v -list -keystore DemoIdentity.jks -storepass DemoIdentityKeyStorePassPhrase | less
+keytool -v -list -keystore DemoTrust.jks -storepass DemoTrustKeyStorePassPhrase | less
+keytool -v -list -keystore cacerts -storepass changeit | less
+
+#Download Certificate
+openssl s_client connect google.com:443 -showcerts
